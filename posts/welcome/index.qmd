@@ -1,12 +1,287 @@
 ---
-title: "Welcome To My Blog Template"
-author: "Emi Tanaka"
-date: "2022-07-18"
-categories: [news]
+title: "A Tale of Two Expos: World vs. Specialised"
+author: "Yiran Yao"
+date: "2024-10-02"
+categories: [Analytics]
+
+format:
+  html:
+    css: styles.css
 ---
 
-This is the first post in a Quarto blog. Welcome!
+# Glimpse of our conclusion
+This blog dives into the size, themes, and economics of World Expos versus Specialised Expos. In short, World Expos tend to be costlier, attract bigger crowds, and involve more countries, while Specialised Expos are more predictable and smaller in scale. Interestingly, even though Specialised Expos often cost more on average, World Expos consistently draw in more visitors and international attention. Just keep in mind, some of the World Expo costs are outliers, so the data might be a bit skewed.
 
-![](thumbnail.jpg)
+![](thumbnail-expo.jpg)
+
+
+```{r global-option, echo = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  eval = TRUE, 
+  warning = FALSE,
+  message = FALSE, 
+  fig.width = 5,
+  fig.height = 3
+)
+```
+
+```{r load-library}
+library(tidyverse)
+library(gridExtra)
+library(tidytext)
+library(gt)
+```
+
+```{r load-data}
+# Load data from TidyTuesday
+worlds_fairs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-08-13/worlds_fairs.csv')
+```
+
+# Introduction
+
+World Expos and Specialised Expos are massive global events that highlight the latest in technology, culture, and international collaboration. They put the host country in the spotlight and draw attention from around the world.
+
+These expos don’t just attract visitors; they also drive economic growth. From boosting GDP to creating jobs and sparking economic activity through spending and supply chains, the impact is significant. That said, the size and cost of hosting these events can vary a lot.
+
+This report digs into how hosting costs connect with the size of the event, based on the number of visitors and participating countries, for both World and Specialised Expos. Understanding these links can help future hosts make smarter plans and investments. However, it’s important to remember that some cost outliers—especially for World Expos—might make trends a little tricky to pin down.
+
+# Results 
+
+### Comparison of Average Attending Countries
+Global participation in both World and Specialised Expos has seen a steady rise over the years.
+
+For both event types, the number of participating countries has grown, with World Expos consistently leading the way, particularly after 1950. In fact, some World Expos after 2000 featured more than 150 countries. While Specialised Expos operate on a smaller scale, they've also experienced an increase in international involvement, highlighting the broader trend of growing global engagement.
+
+```{r avg-attend-comparison}
+#| label: fig-att-cntry
+#| fig-cap: "Average Attending Countries Over Time"
+
+# Separate data set by type of Expo
+expo_world <- worlds_fairs %>% filter(category == "World Expo")
+expo_spec <- worlds_fairs  %>% filter(category == "Specialised Expo")
+
+# Calculate average attending countries per year for both Expo
+avg_attend_world <- expo_world %>%
+  group_by(start_year) %>%
+  summarise(avg_countries = mean(attending_countries, na.rm = TRUE)) %>%
+  mutate(expo_type = "World Expo")
+
+avg_attend_spec <- expo_spec %>%
+  group_by(start_year) %>%
+  summarise(avg_countries = mean(attending_countries, na.rm = TRUE)) %>%
+  mutate(expo_type = "Specialised Expo") 
+
+avg_attend_combined <- bind_rows(avg_attend_world, avg_attend_spec) %>%
+  mutate(avg_countries = round(avg_countries, 0))
+
+# Visualise the trend of attendance over time 
+avg_attend_plot <- ggplot(avg_attend_combined, aes(x = start_year, y = avg_countries, color = expo_type)) +
+  geom_point(size = 2) + 
+  theme_linedraw() + 
+  ggtitle("Average Attending Countries Over Time") +
+  xlab("Year") +
+  ylab("Average Number of Attending Countries") +
+  scale_color_manual(name = "Exposition Type", values = c("World Expo" = "#00AFBB", "Specialised Expo" = "#FC4E07"))
+
+print(avg_attend_plot)
+```
+
+### Correlation between Area Size and Number of Visitors
+
+There's a clear connection between venue size and visitor numbers for both World and Specialised Expos.
+
+World Expos, with their larger venues, often draw over 40 million visitors, showing their grander scale. Specialised Expos follow a similar pattern, but on a smaller scale, with smaller venues attracting fewer visitors.
+
+The numbers suggest that while bigger venues do lead to more visitors in both cases, the effect is much stronger for World Expos. Larger venues come with more variation and unpredictability in attendance for these events.
+
+```{r cor-area-vstr}
+#| label: fig-area-vstr
+#| fig-cap: "Area vs. Visitors"
+# lm scatter plot 
+world_lm_plot <- ggplot(expo_world, aes(x = area, y = visitors)) +
+  geom_point(size = 2, alpha = 0.6, color = "#00AFBB") + 
+  geom_smooth(method = 'lm', color = "#00AFBB", size = 1.5) + 
+  theme_classic() + 
+  ggtitle('World Expo') +
+  xlab('Area (1000s of m²)') +
+  ylab('Visitors (Millions)')
+
+spec_lm_plot <- ggplot(expo_spec, aes(x = area, y = visitors)) +
+  geom_point(size = 2, alpha = 0.6, color = "#FC4E07") + 
+  geom_smooth(method = 'lm', color = "#FC4E07", size = 1.5) + 
+  theme_classic() + 
+  ggtitle('Specialised Expo') +
+  xlab('Area (1000s of m²)') +
+  ylab('Visitors (Millions)')
+
+grid.arrange(world_lm_plot, spec_lm_plot, ncol = 2)
+```
+
+### Top theme of Expos
+
+World Expos focus on broad, universal themes like arts and industry, while Specialised Expos target specific issues like water and energy, offering a more focused exploration.
+
+This distinction reflects the broader scope of World Expos and the more targeted nature of Specialised Expos.
+
+```{r top-theme}
+#| label: fig-word-thm
+#| fig-cap: "Top Words in Themes"
+#| fig-pos: "H"
+# Tokenize the themes
+themes_words <- worlds_fairs %>%
+  unnest_tokens(word, theme) %>%
+  count(category, word, sort = TRUE) %>%
+  ungroup()
+
+# Remove unnecessary words
+themes_words <- themes_words %>%
+  anti_join(stop_words, by = "word")
+
+# Get the top 10 most common words and plot them 
+top_words_world <- themes_words %>%
+  filter(category == "World Expo") %>%
+  top_n(10, n)
+
+top_words_world_plot <- ggplot(top_words_world, aes(x = reorder(word, n), y = n)) +
+  geom_bar(stat = "identity", fill = "#00AFBB") + 
+  coord_flip() +
+  xlab('Word') +
+  ylab('Frequency') +
+  theme_minimal()
+
+top_words_spec <- themes_words %>%
+  filter(category == "Specialised Expo") %>%
+  top_n(10, n)
+
+top_words_spec_plot <- ggplot(top_words_spec, aes(x = reorder(word, n), y = n)) +
+  geom_bar(stat = "identity", fill = "#FC4E07") + 
+  coord_flip() +
+  xlab('Word') +
+  ylab('Frequency') +
+  theme_minimal()
+
+grid.arrange(top_words_world_plot, top_words_spec_plot, ncol = 2)
+
+```
+
+### Relationship between Ecnomic Factors and Scale of Expo
+
+World Expos tend to have a lower median cost (40.00) but a much higher average cost (557.89), thanks to a few high-cost outliers. They also draw bigger crowds, averaging 21.76 million visitors and 45.89 participating countries. In comparison, Specialised Expos, while more consistent in cost, attract smaller audiences, with an average of 11.31 million visitors and 36.86 countries.
+
+```{r com-eco-scl}
+#| label: tbl-eco
+#| tbl-cap: "Comparison of Economic Factors and Scale of Events"
+
+expo_world_filtered <- expo_world %>%
+  filter(cost > 0, visitors > 0, attending_countries > 0)  
+
+expo_spec_filtered <- expo_spec %>%
+  filter(cost > 0, visitors > 0, attending_countries > 0)  
+
+summary_table_world <- expo_world_filtered %>%
+  summarise(
+    mean_cost = mean(cost, na.rm = TRUE),
+    median_cost = median(cost, na.rm = TRUE),
+    mean_visitors = mean(visitors, na.rm = TRUE),
+    median_visitors = median(visitors, na.rm = TRUE),
+    mean_attending_countries = mean(attending_countries, na.rm = TRUE),
+    median_attending_countries = median(attending_countries, na.rm = TRUE)
+  )
+
+summary_table_specialised <- expo_spec_filtered %>%
+  summarise(
+    mean_cost = mean(cost, na.rm = TRUE),
+    median_cost = median(cost, na.rm = TRUE),
+    mean_visitors = mean(visitors, na.rm = TRUE),
+    median_visitors = median(visitors, na.rm = TRUE),
+    mean_attending_countries = mean(attending_countries, na.rm = TRUE),
+    median_attending_countries = median(attending_countries, na.rm = TRUE)
+  )
+
+summary_combined <- bind_rows(
+  summary_table_world %>% mutate(expo_type = "World Expo"),
+  summary_table_specialised %>% mutate(expo_type = "Specialised Expo")
+) %>%
+  tibble()  
+
+summary_combined <- summary_combined %>%
+  select(expo_type, everything())
+
+# gt table for formatting
+summary_combined %>%
+  gt() %>%
+  tab_header(
+    title = "Comparison of Economic Factors and Scale of Events",
+    subtitle = "World Expo vs Specialised Expo"
+  ) %>%
+  tab_spanner(
+    label = "Cost",
+    columns = c(mean_cost, median_cost) 
+  ) %>%
+  tab_spanner(
+    label = "Visitors",
+    columns = c(mean_visitors, median_visitors)  
+  ) %>%
+  tab_spanner(
+    label = "Attending Countries",
+    columns = c(mean_attending_countries, median_attending_countries)  
+  ) %>%
+  cols_label(
+    expo_type = "Expo Type",
+    mean_cost = "Mean",
+    median_cost = "Median",
+    mean_visitors = "Mean",
+    median_visitors = "Median",
+    mean_attending_countries = "Mean",
+    median_attending_countries = "Median"
+  ) %>%
+  fmt_number(
+    columns = c(mean_cost, median_cost, mean_visitors, median_visitors, mean_attending_countries, median_attending_countries),
+    decimals = 2  
+  ) %>%
+  tab_options(
+    table.font.size = "small"
+  ) %>%
+  tab_options(
+    table.font.size = px(12), 
+    table.width = pct(80),    
+    data_row.padding = px(5),  
+    column_labels.font.size = px(14), 
+    table.align = "center"  
+  )
+```
+
+# Methods
+
+## Data Source
+
+The data used in this analysis comes from the [Tidy Tuesday Project](https://github.com/rfordatascience/tidytuesday) published on August 13th, 2024, under the CC-BY 1.0 license. It is titled "World's Fairs" and was originally scraped from [Wikipedia's list of world expositions](https://en.wikipedia.org/wiki/List_of_world_expositions). The Tidy Tuesday team cleaned the data, and the original cleaning script is available on GitHub.
+
+## Data Dictionary
+
+The following is a list of variables in this dataset, including their names, data types, and descriptions:
+
+-   `start_month`: Month in which the fair began (*integer*)
+-   `start_year`: Year in which the fair began (*integer*)
+-   `end_month`: Month in which the fair ended (*integer*)
+-   `end_year`: Year in which the fair ended (*integer*)
+-   `name_of_exposition`: Name used to describe the fair (*character*)
+-   `country`: Country in which the fair was held (*character*)
+-   `city`: City in which the fair was held (*character*)
+-   `category`: Whether the fair was a "World Expo" or a "Specialised Expo" (*character*)
+-   `theme` : The stated theme of the fair (*character*)
+-   `notables`: Notable buildings, inventions, or events at the fair (*character*)
+-   `visitors`: Number of visitors in millions (*double*)
+-   `cost`: Cost in millions of USD (or millions of another currency, as noted in exceptions) (*double*)
+-   `attending_countries`: Number of countries which officially attended (*integer*)
+
+## Reference
+
+-   The Global Association of the Exhibition Industry; Oxford Economics (2019). Global Economic Impact of Exhibitions. https://www.ufi.org/wp-content/uploads/2019/04/Global-Economic-Impact-of-Exhibitions_b.pdf
+
+
+
+
 
 
