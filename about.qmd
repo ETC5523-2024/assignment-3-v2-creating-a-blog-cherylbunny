@@ -1,13 +1,38 @@
 ---
 title: "About"
-image: profile.jpg
+image: myprofile.jpg
+
 about:
   template: jolla
   links:
     - icon: github
       text: Github
-      href: https://github.com/etc5523-2022
+      href: https://github.com/cherylbunny
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/cherylyao/
+    - icon: envelope
+      text: Email
+      href: "mailto:yyao0066@student.monash.edu"
 
+format:
+  html:
+    css: styles.css
 ---
 
-This is a blog template for the ETC5523 Communicating with Data assessment at Monash University.
+I am an aspiring professional with a background in hospitality and a current focus on Business Analytics. 
+
+My journey has taken me from learning the nuances of human interactions to navigating the tech-savvy world during the roller coaster ride of covid. Now, I’m excited to apply my analytical skills to tackle complex challenges across various industries.
+
+I thrive on transforming binary thinking into a more nuanced, data-informed perspective, leveraging diverse resources and tools to dissect every corner of the world through a logical lens. If you have a question or a project that could benefit from a fresh analytical approach, I’d love to connect. 
+
+My areas of interest include:
+
+* Leveraging data analytics to drive strategic decision-making for businesses 
+
+* Examining user behaviour to improve product features and enhance UI/UX
+
+* Utilizing analytical techniques to uncover insights 
+
+
+
