@@ -9,11 +9,23 @@ format:
     css: styles.css
 ---
 
-# Glimpse of our conclusion
-This blog dives into the size, themes, and economics of World Expos versus Specialised Expos. In short, World Expos tend to be costlier, attract bigger crowds, and involve more countries, while Specialised Expos are more predictable and smaller in scale. Interestingly, even though Specialised Expos often cost more on average, World Expos consistently draw in more visitors and international attention. Just keep in mind, some of the World Expo costs are outliers, so the data might be a bit skewed.
+## Penny for Thoughts 
+
+Chances are, most of us have either been to an Expo or at least heard about one, especially when it’s hosted in our own country. It’s a massive event that takes the whole nation’s effort to pull off successfully. But did you know there are actually two kinds of Expos? The World Expos and Specialised Expos. 
+
+In this blog, we’re going to dive into what makes these two types of Expos different—looking at their costs, scale, and themes. By the end, you’ll have a better idea of what to expect from each one. 
+
+## A Glimpse of our Conclusion 
+
+In short, World Expos tend to be costlier, attract bigger crowds, and involve more countries, while Specialised Expos are more predictable and smaller in scale. 
+
+Interestingly, even though Specialised Expos often cost more on average, World Expos consistently draw in more visitors and international attention. (Just keep in mind, some of the World Expo costs are outliers, so the data might be a bit skewed.)
 
 ![](thumbnail-expo.jpg)
 
+#### Source of Data 
+
+The data used in this analysis comes from the [Tidy Tuesday Project](https://github.com/rfordatascience/tidytuesday) published on August 13th, 2024, under the CC-BY 1.0 license. It is titled "World's Fairs" and was originally scraped from [Wikipedia's list of world expositions](https://en.wikipedia.org/wiki/List_of_world_expositions). The Tidy Tuesday team cleaned the data, and the original cleaning script is available on GitHub.
 
 ```{r global-option, echo = FALSE}
 knitr::opts_chunk$set(
@@ -21,8 +33,8 @@ knitr::opts_chunk$set(
   eval = TRUE, 
   warning = FALSE,
   message = FALSE, 
-  fig.width = 5,
-  fig.height = 3
+  fig.width = 6,
+  fig.height = 4
 )
 ```
 
@@ -33,33 +45,39 @@ library(tidytext)
 library(gt)
 ```
 
-```{r load-data}
-# Load data from TidyTuesday
+You may get the data directly from TidyTuesday with the following code: 
+
+```{r load-data, echo = TRUE}
 worlds_fairs <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-08-13/worlds_fairs.csv')
 ```
 
-# Introduction
+The data set is pre-cleaned, but it is still considered good practice to separate the data set by type of Expo: 
 
-World Expos and Specialised Expos are massive global events that highlight the latest in technology, culture, and international collaboration. They put the host country in the spotlight and draw attention from around the world.
+```{r clean-data, echo = TRUE}
+expo_world <- worlds_fairs %>% filter(category == "World Expo")
+expo_spec <- worlds_fairs  %>% filter(category == "Specialised Expo")
+```
 
-These expos don’t just attract visitors; they also drive economic growth. From boosting GDP to creating jobs and sparking economic activity through spending and supply chains, the impact is significant. That said, the size and cost of hosting these events can vary a lot.
+## Introduction
 
-This report digs into how hosting costs connect with the size of the event, based on the number of visitors and participating countries, for both World and Specialised Expos. Understanding these links can help future hosts make smarter plans and investments. However, it’s important to remember that some cost outliers—especially for World Expos—might make trends a little tricky to pin down.
+* **What is Expo**: World Expos and Specialised Expos are massive global events that highlight the latest in technology, culture, and international collaboration. They put the host country in the spotlight and draw attention from around the world.
 
-# Results 
+* **Why does it matter**: Expos don’t just attract visitors; they also drive economic growth. From boosting GDP to creating jobs and sparking economic activity through spending and supply chains, the impact is significant. That said, the size and cost of hosting these events can vary a lot (find more details here: *[Global Economic Impact of Exhibitions](https://www.ufi.org/wp-content/uploads/2019/04/Global-Economic-Impact-of-Exhibitions_b.pdf)*). 
 
-### Comparison of Average Attending Countries
-Global participation in both World and Specialised Expos has seen a steady rise over the years.
+* **What's up next**: This report digs into how hosting costs connect with the size of the event, based on the number of visitors and participating countries, for both World and Specialised Expos. Understanding these links can help future visitors and hosts make smarter plans and investments. However, once again, it’s important to remember that some cost outliers might make trends a little tricky to pin down.
 
-For both event types, the number of participating countries has grown, with World Expos consistently leading the way, particularly after 1950. In fact, some World Expos after 2000 featured more than 150 countries. While Specialised Expos operate on a smaller scale, they've also experienced an increase in international involvement, highlighting the broader trend of growing global engagement.
+## Analysis 
+
+#### Comparison of Average Attending Countries
+Global participation in both World and Specialised Expos has seen <span class="highlight"> a steady rise over the years</span> @fig-att-cntry.
+
+For both event types, the number of participating countries has grown, with World Expos consistently leading the way, particularly after 1950. In fact, some World Expos after 2000 featured more than 150 countries. 
+
+While Specialised Expos operate on a smaller scale, they've also experienced an increase in international involvement, highlighting the broader trend of growing global engagement.
 
 ```{r avg-attend-comparison}
 #| label: fig-att-cntry
 #| fig-cap: "Average Attending Countries Over Time"
-
-# Separate data set by type of Expo
-expo_world <- worlds_fairs %>% filter(category == "World Expo")
-expo_spec <- worlds_fairs  %>% filter(category == "Specialised Expo")
 
 # Calculate average attending countries per year for both Expo
 avg_attend_world <- expo_world %>%
@@ -87,9 +105,9 @@ avg_attend_plot <- ggplot(avg_attend_combined, aes(x = start_year, y = avg_count
 print(avg_attend_plot)
 ```
 
-### Correlation between Area Size and Number of Visitors
+#### Correlation between Area Size and Number of Visitors
 
-There's a clear connection between venue size and visitor numbers for both World and Specialised Expos.
+There's a <span class="highlight"> clear connection between venue size and visitor numbers </span> for both World and Specialised Expos @fig-area-vstr.
 
 World Expos, with their larger venues, often draw over 40 million visitors, showing their grander scale. Specialised Expos follow a similar pattern, but on a smaller scale, with smaller venues attracting fewer visitors.
 
@@ -118,9 +136,9 @@ spec_lm_plot <- ggplot(expo_spec, aes(x = area, y = visitors)) +
 grid.arrange(world_lm_plot, spec_lm_plot, ncol = 2)
 ```
 
-### Top theme of Expos
+#### Top theme of Expos
 
-World Expos focus on broad, universal themes like arts and industry, while Specialised Expos target specific issues like water and energy, offering a more focused exploration.
+World Expos focus on <span class="highlight"> broad, universal themes </span> like arts and industry, while Specialised Expos target <span class="highlight"> specific issues </span> like water and energy, offering a more focused exploration.
 
 This distinction reflects the broader scope of World Expos and the more targeted nature of Specialised Expos.
 
@@ -165,9 +183,11 @@ grid.arrange(top_words_world_plot, top_words_spec_plot, ncol = 2)
 
 ```
 
-### Relationship between Ecnomic Factors and Scale of Expo
+#### Relationship between Ecnomic Factors and Scale of Expo
 
-World Expos tend to have a lower median cost (40.00) but a much higher average cost (557.89), thanks to a few high-cost outliers. They also draw bigger crowds, averaging 21.76 million visitors and 45.89 participating countries. In comparison, Specialised Expos, while more consistent in cost, attract smaller audiences, with an average of 11.31 million visitors and 36.86 countries.
+World Expos tend to have a <span class="highlight"> lower median cost </span> (40.00) but a <span class="highlight"> much higher average cost </span> (557.89), thanks to a few high-cost outliers @tbl-eco. They also draw bigger crowds, averaging 21.76 million visitors and approximately 46 participating countries. 
+
+In comparison, Specialised Expos, while <span class="highlight"> more consistent in cost </span>, attract smaller audiences, with an average of 11.31 million visitors and approximately 37 countries.
 
 ```{r com-eco-scl}
 #| label: tbl-eco
@@ -252,36 +272,25 @@ summary_combined %>%
   )
 ```
 
-# Methods
+## Data Description 
 
-## Data Source
+The following is a list of variables in this data set, including their names and descriptions:
 
-The data used in this analysis comes from the [Tidy Tuesday Project](https://github.com/rfordatascience/tidytuesday) published on August 13th, 2024, under the CC-BY 1.0 license. It is titled "World's Fairs" and was originally scraped from [Wikipedia's list of world expositions](https://en.wikipedia.org/wiki/List_of_world_expositions). The Tidy Tuesday team cleaned the data, and the original cleaning script is available on GitHub.
-
-## Data Dictionary
-
-The following is a list of variables in this dataset, including their names, data types, and descriptions:
-
--   `start_month`: Month in which the fair began (*integer*)
--   `start_year`: Year in which the fair began (*integer*)
--   `end_month`: Month in which the fair ended (*integer*)
--   `end_year`: Year in which the fair ended (*integer*)
--   `name_of_exposition`: Name used to describe the fair (*character*)
--   `country`: Country in which the fair was held (*character*)
--   `city`: City in which the fair was held (*character*)
--   `category`: Whether the fair was a "World Expo" or a "Specialised Expo" (*character*)
--   `theme` : The stated theme of the fair (*character*)
--   `notables`: Notable buildings, inventions, or events at the fair (*character*)
--   `visitors`: Number of visitors in millions (*double*)
--   `cost`: Cost in millions of USD (or millions of another currency, as noted in exceptions) (*double*)
--   `attending_countries`: Number of countries which officially attended (*integer*)
+-   `start_month`: Month in which the fair began 
+-   `start_year`: Year in which the fair began 
+-   `end_month`: Month in which the fair ended 
+-   `end_year`: Year in which the fair ended 
+-   `name_of_exposition`: Name used to describe the fair 
+-   `country`: Country in which the fair was held 
+-   `city`: City in which the fair was held 
+-   `category`: Whether the fair was a "World Expo" or a "Specialised Expo" 
+-   `theme` : The stated theme of the fair 
+-   `notables`: Notable buildings, inventions, or events at the fair
+-   `visitors`: Number of visitors in millions 
+-   `cost`: Cost in millions of USD (or millions of another currency, as noted in exceptions)
+-   `attending_countries`: Number of countries which officially attended 
 
 ## Reference
 
 -   The Global Association of the Exhibition Industry; Oxford Economics (2019). Global Economic Impact of Exhibitions. https://www.ufi.org/wp-content/uploads/2019/04/Global-Economic-Impact-of-Exhibitions_b.pdf
-
-
-
-
-
 
