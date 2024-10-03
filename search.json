@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I am an aspiring professional with a background in hospitality and a current focus on Business Analytics.\nMy journey has taken me from learning the nuances of human interactions to navigating the tech-savvy world during the roller coaster ride of covid. Now, I’m excited to apply my analytical skills to tackle complex challenges across various industries.\nI thrive on transforming binary thinking into a more nuanced, data-informed perspective, leveraging diverse resources and tools to dissect every corner of the world through a logical lens. If you have a question or a project that could benefit from a fresh analytical approach, I’d love to connect.\nMy areas of interest include:\n\nLeveraging data analytics to drive strategic decision-making for businesses\nExamining user behaviour to improve product features and enhance UI/UX\nUtilizing analytical techniques to uncover insights"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "",
+    "text": "Chances are, most of us have either been to an Expo or at least heard about one, especially when it’s hosted in our own country. It’s a massive event that takes the whole nation’s effort to pull off successfully. But did you know there are actually two kinds of Expos? The World Expos and Specialised Expos.\nIn this blog, we’re going to dive into what makes these two types of Expos different—looking at their costs, scale, and themes. By the end, you’ll have a better idea of what to expect from each one."
+  },
+  {
+    "objectID": "posts/welcome/index.html#penny-for-thoughts",
+    "href": "posts/welcome/index.html#penny-for-thoughts",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "",
+    "text": "Chances are, most of us have either been to an Expo or at least heard about one, especially when it’s hosted in our own country. It’s a massive event that takes the whole nation’s effort to pull off successfully. But did you know there are actually two kinds of Expos? The World Expos and Specialised Expos.\nIn this blog, we’re going to dive into what makes these two types of Expos different—looking at their costs, scale, and themes. By the end, you’ll have a better idea of what to expect from each one."
+  },
+  {
+    "objectID": "posts/welcome/index.html#a-glimpse-of-our-conclusion",
+    "href": "posts/welcome/index.html#a-glimpse-of-our-conclusion",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "A Glimpse of our Conclusion",
+    "text": "A Glimpse of our Conclusion\nIn short, World Expos tend to be costlier, attract bigger crowds, and involve more countries, while Specialised Expos are more predictable and smaller in scale.\nInterestingly, even though Specialised Expos often cost more on average, World Expos consistently draw in more visitors and international attention. (Just keep in mind, some of the World Expo costs are outliers, so the data might be a bit skewed.)\n\n\nSource of Data\nThe data used in this analysis comes from the Tidy Tuesday Project published on August 13th, 2024, under the CC-BY 1.0 license. It is titled “World’s Fairs” and was originally scraped from Wikipedia’s list of world expositions. The Tidy Tuesday team cleaned the data, and the original cleaning script is available on GitHub.\nYou may get the data directly from TidyTuesday with the following code:\n\nworlds_fairs &lt;- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2024/2024-08-13/worlds_fairs.csv')\n\nThe data set is pre-cleaned, but it is still considered good practice to separate the data set by type of Expo:\n\nexpo_world &lt;- worlds_fairs %&gt;% filter(category == \"World Expo\")\nexpo_spec &lt;- worlds_fairs  %&gt;% filter(category == \"Specialised Expo\")"
+  },
+  {
+    "objectID": "posts/welcome/index.html#introduction",
+    "href": "posts/welcome/index.html#introduction",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "Introduction",
+    "text": "Introduction\n\nWhat is Expo: World Expos and Specialised Expos are massive global events that highlight the latest in technology, culture, and international collaboration. They put the host country in the spotlight and draw attention from around the world.\nWhy does it matter: Expos don’t just attract visitors; they also drive economic growth. From boosting GDP to creating jobs and sparking economic activity through spending and supply chains, the impact is significant. That said, the size and cost of hosting these events can vary a lot (find more details here: Global Economic Impact of Exhibitions).\nWhat’s up next: This report digs into how hosting costs connect with the size of the event, based on the number of visitors and participating countries, for both World and Specialised Expos. Understanding these links can help future visitors and hosts make smarter plans and investments. However, once again, it’s important to remember that some cost outliers might make trends a little tricky to pin down."
+  },
+  {
+    "objectID": "posts/welcome/index.html#analysis",
+    "href": "posts/welcome/index.html#analysis",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "Analysis",
+    "text": "Analysis\n\nComparison of Average Attending Countries\nGlobal participation in both World and Specialised Expos has seen  a steady rise over the years Figure 1.\nFor both event types, the number of participating countries has grown, with World Expos consistently leading the way, particularly after 1950. In fact, some World Expos after 2000 featured more than 150 countries.\nWhile Specialised Expos operate on a smaller scale, they’ve also experienced an increase in international involvement, highlighting the broader trend of growing global engagement.\n\n\n\n\n\n\n\n\nFigure 1: Average Attending Countries Over Time\n\n\n\n\n\n\n\nCorrelation between Area Size and Number of Visitors\nThere’s a  clear connection between venue size and visitor numbers  for both World and Specialised Expos Figure 2.\nWorld Expos, with their larger venues, often draw over 40 million visitors, showing their grander scale. Specialised Expos follow a similar pattern, but on a smaller scale, with smaller venues attracting fewer visitors.\nThe numbers suggest that while bigger venues do lead to more visitors in both cases, the effect is much stronger for World Expos. Larger venues come with more variation and unpredictability in attendance for these events.\n\n\n\n\n\n\n\n\nFigure 2: Area vs. Visitors\n\n\n\n\n\n\n\nTop theme of Expos\nWorld Expos focus on  broad, universal themes  like arts and industry, while Specialised Expos target  specific issues  like water and energy, offering a more focused exploration.\nThis distinction reflects the broader scope of World Expos and the more targeted nature of Specialised Expos.\n\n\n\n\n\n\n\n\nFigure 3: Top Words in Themes\n\n\n\n\n\n\n\nRelationship between Ecnomic Factors and Scale of Expo\nWorld Expos tend to have a  lower median cost  (40.00) but a  much higher average cost  (557.89), thanks to a few high-cost outliers Table 1. They also draw bigger crowds, averaging 21.76 million visitors and approximately 46 participating countries.\nIn comparison, Specialised Expos, while  more consistent in cost , attract smaller audiences, with an average of 11.31 million visitors and approximately 37 countries.\n\n\n\n\nTable 1: Comparison of Economic Factors and Scale of Events\n\n\n\n\n\n\n\n\n\nComparison of Economic Factors and Scale of Events\n\n\nWorld Expo vs Specialised Expo\n\n\nExpo Type\nCost\nVisitors\nAttending Countries\n\n\nMean\nMedian\nMean\nMedian\nMean\nMedian\n\n\n\n\nWorld Expo\n557.89\n40.00\n21.76\n15.50\n45.89\n34.00\n\n\nSpecialised Expo\n576.71\n350.00\n11.31\n8.20\n36.86\n23.00"
+  },
+  {
+    "objectID": "posts/welcome/index.html#conclusion",
+    "href": "posts/welcome/index.html#conclusion",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "Conclusion",
+    "text": "Conclusion\nIn a nutshell, the analysis of World and Specialised Expos reveals distinct differences in cost, scale, and global participation, directly addressing the initial question of how these events compare. World Expos, despite their variability in cost and outliers, consistently attract larger crowds and more international participation, particularly since the mid-20th century. In contrast, Specialised Expos are more predictable in cost but operate on a smaller scale. These insights provide valuable information for future hosts looking to balance investment with global impact and participation."
+  },
+  {
+    "objectID": "posts/welcome/index.html#data-description",
+    "href": "posts/welcome/index.html#data-description",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "Data Description",
+    "text": "Data Description\nThe following is a list of variables in this data set, including their names and descriptions:\n\nstart_month: Month in which the fair began\nstart_year: Year in which the fair began\nend_month: Month in which the fair ended\nend_year: Year in which the fair ended\nname_of_exposition: Name used to describe the fair\ncountry: Country in which the fair was held\ncity: City in which the fair was held\ncategory: Whether the fair was a “World Expo” or a “Specialised Expo”\ntheme : The stated theme of the fair\nnotables: Notable buildings, inventions, or events at the fair\nvisitors: Number of visitors in millions\ncost: Cost in millions of USD (or millions of another currency, as noted in exceptions)\nattending_countries: Number of countries which officially attended"
+  },
+  {
+    "objectID": "posts/welcome/index.html#reference",
+    "href": "posts/welcome/index.html#reference",
+    "title": "A Tale of Two Expos: World vs. Specialised",
+    "section": "Reference",
+    "text": "Reference\n\nThe Global Association of the Exhibition Industry; Oxford Economics (2019). Global Economic Impact of Exhibitions. https://www.ufi.org/wp-content/uploads/2019/04/Global-Economic-Impact-of-Exhibitions_b.pdf"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "ETC5523 Blog Assessment",
+    "section": "",
+    "text": "A Tale of Two Expos: World vs. Specialised\n\n\n\n\n\n\nAnalytics\n\n\n\n\n\n\n\n\n\nOct 2, 2024\n\n\nYiran Yao\n\n\n\n\n\n\nNo matching items"
+  }
+]
