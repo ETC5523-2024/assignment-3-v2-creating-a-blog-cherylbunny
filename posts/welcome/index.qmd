@@ -272,6 +272,10 @@ summary_combined %>%
   )
 ```
 
+## Conclusion 
+
+In a nutshell, the analysis of World and Specialised Expos reveals distinct differences in cost, scale, and global participation, directly addressing the initial question of how these events compare. World Expos, despite their variability in cost and outliers, consistently attract larger crowds and more international participation, particularly since the mid-20th century. In contrast, Specialised Expos are more predictable in cost but operate on a smaller scale. These insights provide valuable information for future hosts looking to balance investment with global impact and participation.
+
 ## Data Description 
 
 The following is a list of variables in this data set, including their names and descriptions:
