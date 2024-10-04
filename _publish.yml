@@ -1,0 +1,4 @@
+- source: project
+  quarto-pub:
+    - id: e64e7639-c2ce-4ad4-b49e-b000d0b75954
+      url: 'https://yrcheryl.quarto.pub/bunnys-maze-of-analytics'
