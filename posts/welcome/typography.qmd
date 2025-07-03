@@ -1,0 +1,36 @@
+---
+title: "Time-series Analysis of Arrival Data"
+author: "Yiran Yao"
+date: today
+categories: [Curiosity]
+
+format:
+  html:
+    css: styles_homepage.css
+---
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(fpp3)
+library(fable)
+library(fabletools)
+library(feasts)
+library(forecast)
+library(readxl)
+library(distributional)
+```
+
+```{r}
+arrival <- read_excel("../data/340101.xlsx", sheet = 2)
+
+arrival_cl <- arrival[-c(1:9), -13] |>
+  mutate(...1 = format(as.Date(as.numeric(...1), origin = "1899-12-30"), "%Y-%m"))
+```
+
+
+
+
+
+
+

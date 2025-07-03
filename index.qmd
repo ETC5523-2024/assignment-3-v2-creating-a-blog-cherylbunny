@@ -1,5 +1,4 @@
 ---
-title: "ETC5523 Blog Assessment"
 listing:
   contents: posts
   sort: "date desc"
@@ -12,7 +11,7 @@ title-block-banner: true
 
 format:
   html:
-    css: styles.css
+    css: styles_homepage.css
 ---
 
 
